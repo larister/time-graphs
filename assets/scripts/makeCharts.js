@@ -6,7 +6,7 @@
 
     var colors = new Plottable.Scale.Color("Category10").range();
 
-    function makeBasicChart() {
+    function makeBasicChart(xyData) {
         var xScale = new Plottable.Scale.Linear();
         var yScale = new Plottable.Scale.Linear();
 
@@ -37,7 +37,7 @@
         return plot;
     }
 
-    function stackedAreaPlot(plotData) {
+    function stackedAreaPlot() {
         var xScale = new Plottable.Scale.Linear();
         var yScale = new Plottable.Scale.Linear();
 
@@ -60,10 +60,9 @@
         chart.renderTo("#areaPlot");
     }
 
-    function makeStackedChart() {
-
-        var data0  = [{x : 'Left', y : 10}, {x : 'Right', y : 20}];
-        var data1  = [{x : 'Left', y : 12}, {x : 'Right', y : 5}];
+    function makeStackedChart(stackedData) {
+        var data0  = [{x : "Left", y : 10}, {x : "Right", y : 20}];
+        var data1  = [{x : "Left", y : 12}, {x : "Right", y : 5}];
 
 
         [data0, data1].forEach(function(data, i){
@@ -96,10 +95,10 @@
             .renderTo("svg#stackedBar");
     }
 
-    window.makeCharts = function(){
-        makeBasicChart();
+    window.makeCharts = function(xyData, stackedData){
+        makeBasicChart(xyData);
         stackedAreaPlot();
-        makeStackedChart();
+        makeStackedChart(stackedData);
     };
 
 })();

@@ -1,0 +1,24 @@
+<!doctype html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Time-graphs2</title>
+        <link rel="stylesheet" type="text/css" href="bower_components/plottable/plottable.css"/>
+
+        <script src="bower_components/d3/d3.js"></script>
+        <script src="bower_components/plottable/plottable.js"></script>
+
+        <script src="scripts/xyData.js"></script>
+        <script src="scripts/makeCharts.js"></script>
+
+        <script src="scripts/stackedData.js"></script>
+    </head>
+    <body>
+        {{{ body }}}
+    </body>
+    <script>
+        window.onload = function(){
+            makeCharts(xyData, stackedData);
+        }
+    </script>
+</html>

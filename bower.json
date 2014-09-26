@@ -1,6 +1,7 @@
 {
-  "name": "time-graphs",
+  "name": "time-graphs2",
   "version": "0.0.0",
+  "devDependencies": {},
   "dependencies": {
     "plottable": "~0.30.0"
   }
