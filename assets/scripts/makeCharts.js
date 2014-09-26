@@ -24,7 +24,7 @@
             [null, xAxis]
         ]);
 
-        chart.renderTo("#basicChart");
+        return chart;
     }
 
     function getXYPlot(data) {
@@ -37,7 +37,7 @@
         return plot;
     }
 
-    function stackedAreaPlot() {
+    function makeStackedAreaChart() {
         var xScale = new Plottable.Scale.Linear();
         var yScale = new Plottable.Scale.Linear();
 
@@ -57,13 +57,12 @@
             [null, xAxis]
         ]);
 
-        chart.renderTo("#areaPlot");
+        return chart;
     }
 
-    function makeStackedChart(stackedData) {
+    function makeStackedBarChart(stackedData) {
         var data0  = [{x : "Left", y : 10}, {x : "Right", y : 20}];
         var data1  = [{x : "Left", y : 12}, {x : "Right", y : 5}];
-
 
         [data0, data1].forEach(function(data, i){
             data.forEach(function(d){
@@ -80,6 +79,7 @@
         var lines  = new Plottable.Component.Gridlines(null, yScale);
         var plot   = new Plottable.Plot.StackedBar(xScale, yScale)
             .animate(true);
+        var chart;
 
 
         for(var i = 0; i < stackedData.length; ++i) {
@@ -88,17 +88,31 @@
 
         plot.project("fill", function(d){return "Series #" + d.i;}, colorScale);
 
-        new Plottable.Component.Table([
+        chart = new Plottable.Component.Table([
             [null, yAxis, lines.merge(plot)],
-            [null,    null, xAxis]
-        ])
-            .renderTo("svg#stackedBar");
+            [null, null, xAxis]
+        ]);
+
+        return chart;
     }
 
     window.makeCharts = function(xyData, stackedData){
-        makeBasicChart(xyData);
-        stackedAreaPlot();
-        makeStackedChart(stackedData);
+        var basicChart = makeBasicChart(xyData);
+        var stackedArea = makeStackedAreaChart();
+        var stackedBar = makeStackedBarChart(stackedData);
+
+        var chartsTable = new Plottable.Component.Table();
+
+        chartsTable.addComponent(0, 0, new Plottable.Component.Label("Num1", "horizontal"));
+        chartsTable.addComponent(1, 0, basicChart);
+
+        chartsTable.addComponent(0, 1, new Plottable.Component.Label("Num2", "horizontal"));
+        chartsTable.addComponent(1, 1, stackedArea);
+
+        chartsTable.addComponent(2, 0, new Plottable.Component.Label("Num3", "horizontal"));
+        chartsTable.addComponent(3, 0, stackedBar);
+
+        chartsTable.renderTo("#table");
     };
 
 })();
