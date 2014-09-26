@@ -41,30 +41,26 @@
         return chart;
     }
 
-    function getXYPlot(data) {
+    function getXYPlot(timezone, index) {
         var xScale = new Plottable.Scale.Linear();
         var yScale = new Plottable.Scale.Linear();
-        var ds = new Plottable.Dataset(data);
+        var ds = new Plottable.Dataset(timezone);
         var plot = new Plottable.Plot.Area(ds, xScale, yScale);
 
+        plot.project("fill", colors[index]);
         plot.animate(true);
         return plot;
     }
 
-    function makeStackedAreaChart() {
-        var xScale = new Plottable.Scale.Linear();
+    function makeStackedAreaChart(data) {
+        var xScale = new Plottable.Scale.Time();
         var yScale = new Plottable.Scale.Linear();
-
-        var plot = getXYPlot(quantitativeData);
-        var plot2 = getXYPlot(quantitativeData2);
+        var plots = _(data).chain().values().map(getXYPlot).value();
 
         var xAxis = new Plottable.Axis.Numeric(xScale, "bottom");
         var yAxis = new Plottable.Axis.Numeric(yScale, "left");
 
-        plot.project("fill", colors[0]);
-        plot2.project("fill", colors[1]);
-
-        var group = new Plottable.Component.Group([plot, plot2]);
+        var group = new Plottable.Component.Group(plots);
 
         var chart = new Plottable.Component.Table([
             [yAxis, group],
@@ -155,21 +151,27 @@
         var stackedBar = makeStackedChart(stackedData);
         var comparisonChart = makeComparisonChart(stackedData);
 
-        var chartsTable = new Plottable.Component.Table();
+        var timezoneTable = new Plottable.Component.Table();
+        var playChartsTable = new Plottable.Component.Table();
 
-        chartsTable.addComponent(0, 0, new Plottable.Component.Label("Num1", "horizontal"));
-        chartsTable.addComponent(1, 0, basicChart);
+        timezoneTable.addComponent(0, 0, new Plottable.Component.Label("Timezones", "horizontal"));
+        timezoneTable.addComponent(1, 0, stackedArea);
 
-        chartsTable.addComponent(0, 1, new Plottable.Component.Label("Num2", "horizontal"));
-        chartsTable.addComponent(1, 1, stackedArea);
+        playChartsTable.addComponent(0, 0, new Plottable.Component.Label("Num2", "horizontal"));
+        playChartsTable.addComponent(1, 0, basicChart);
 
-        chartsTable.addComponent(2, 0, new Plottable.Component.Label("Num3", "horizontal"));
-        chartsTable.addComponent(3, 0, stackedBar);
+        playChartsTable.addComponent(0, 1, new Plottable.Component.Label("Num3", "horizontal"));
+        playChartsTable.addComponent(1, 1, stackedBar);
 
-        chartsTable.addComponent(2, 1, new Plottable.Component.Label("Num4", "horizontal"));
-        chartsTable.addComponent(3, 1, comparisonChart);
+        playChartsTable.addComponent(2, 0, new Plottable.Component.Label("Num4", "horizontal"));
+        playChartsTable.addComponent(3, 0, comparisonChart);
 
-        chartsTable.renderTo("#table");
+        var layoutTable = new Plottable.Component.Table([
+            [timezoneTable],
+            [playChartsTable]
+        ]);
+
+        layoutTable.renderTo("#table");
 
     };
 
