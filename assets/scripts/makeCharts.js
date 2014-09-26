@@ -60,16 +60,7 @@
         return chart;
     }
 
-    function makeStackedBarChart(stackedData) {
-        var data0  = [{x : "Left", y : 10}, {x : "Right", y : 20}];
-        var data1  = [{x : "Left", y : 12}, {x : "Right", y : 5}];
-
-        [data0, data1].forEach(function(data, i){
-            data.forEach(function(d){
-                d.i = i;
-            });
-        });
-
+    function makeStackedChart(stackedData) {
         var xScale     = new Plottable.Scale.Ordinal();
         var yScale     = new Plottable.Scale.Linear();
         var colorScale = new Plottable.Scale.Color("Category10");
@@ -96,10 +87,58 @@
         return chart;
     }
 
+    function makeComparisonChart(stackedData) {
+        var chartData = [];
+        for(var i = 0; i < stackedData.length; ++i) {
+            chartData = chartData.concat(stackedData[i]);
+        }
+        var crossfilterData = crossfilter(chartData);
+
+        var xDimension =  crossfilterData.dimension(function(d) { return d.x; });
+        var data = xDimension.group().reduceSum(function(data) {
+            return data.y;
+        }).top(Infinity);
+
+        data.sort(function(a, b) {
+            if(a.key > b.key) return 1;
+            else return -1;
+        });
+
+        var xScale     = new Plottable.Scale.Ordinal();
+        var yScale     = new Plottable.Scale.Linear();
+        var colorScale = new Plottable.Scale.Color("Category10");
+
+        var xAxis  = new Plottable.Axis.Category(xScale, "bottom");
+        var yAxis  = new Plottable.Axis.Numeric(yScale, "left");
+        var lines  = new Plottable.Component.Gridlines(null, yScale);
+        var plot   = new Plottable.Plot.ClusteredBar(xScale, yScale)
+            .animate(true);
+        var plot1   = new Plottable.Plot.Line(data, xScale, yScale)
+            .project("x", "key", xScale)
+            .project("y", "value", yScale);
+
+        var plots = new Plottable.Component.Group([plot, plot1]);
+
+
+        for(var i = 0; i < stackedData.length; ++i) {
+            plot.addDataset(stackedData[i]);
+        }
+
+        plot.project("fill", function(d){return "Series #" + d.i;}, colorScale);
+
+        var chart = new Plottable.Component.Table([
+            [null, yAxis, lines.merge(plots)],
+            [null, null, xAxis]
+        ]);
+
+        return chart;
+    }
+
     window.makeCharts = function(xyData, stackedData){
         var basicChart = makeBasicChart(xyData);
         var stackedArea = makeStackedAreaChart();
-        var stackedBar = makeStackedBarChart(stackedData);
+        var stackedBar = makeStackedChart(stackedData);
+        var comparisonChart = makeComparisonChart(stackedData);
 
         var chartsTable = new Plottable.Component.Table();
 
@@ -112,7 +151,11 @@
         chartsTable.addComponent(2, 0, new Plottable.Component.Label("Num3", "horizontal"));
         chartsTable.addComponent(3, 0, stackedBar);
 
+        chartsTable.addComponent(2, 1, new Plottable.Component.Label("Num4", "horizontal"));
+        chartsTable.addComponent(3, 1, comparisonChart);
+
         chartsTable.renderTo("#table");
+
     };
 
 })();
