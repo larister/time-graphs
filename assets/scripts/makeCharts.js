@@ -6,6 +6,20 @@
 
     var colors = new Plottable.Scale.Color("Category10").range();
 
+    function transformTimezoneData(timezoneData) {
+        return _(timezoneData).reduce(function(memo, timezoneData, timezoneName) {
+            if (Array.isArray(timezoneData)) {
+                memo[timezoneName] = timezoneData.map(function(item, index) {
+                    return {
+                        x: index,
+                        y: item
+                    };
+                });
+            }
+            return memo;
+        }, {});
+    }
+
     function makeBasicChart(xyData) {
         var xScale = new Plottable.Scale.Linear();
         var yScale = new Plottable.Scale.Linear();
@@ -134,9 +148,10 @@
         return chart;
     }
 
-    window.makeCharts = function(xyData, stackedData){
+    window.makeCharts = function(xyData, stackedData, timezoneData5Min){
+        var timezoneData = transformTimezoneData(timezoneData5Min);
         var basicChart = makeBasicChart(xyData);
-        var stackedArea = makeStackedAreaChart();
+        var stackedArea = makeStackedAreaChart(timezoneData);
         var stackedBar = makeStackedChart(stackedData);
         var comparisonChart = makeComparisonChart(stackedData);
 
