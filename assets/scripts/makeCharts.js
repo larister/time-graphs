@@ -76,6 +76,7 @@
         var xScale     = new Plottable.Scale.Ordinal();
         var yScale     = new Plottable.Scale.Linear();
         var colorScale = new Plottable.Scale.Color("Category10");
+        var legend = new Plottable.Component.HorizontalLegend(colorScale);
 
         var xAxis  = new Plottable.Axis.Category(xScale, "bottom");
         var yAxis  = new Plottable.Axis.Numeric(yScale, "left");
@@ -94,6 +95,7 @@
         plot.project("fill", function(d){return "Series #" + d.i;}, colorScale);
 
         chart = new Plottable.Component.Table([
+            [null,    null, legend],
             [null, yAxis, lines.merge(plot)],
             [null, null, xAxis]
         ]);
@@ -124,6 +126,7 @@
         var xScale     = new Plottable.Scale.Ordinal();
         var yScale     = new Plottable.Scale.Linear();
         var colorScale = new Plottable.Scale.Color("Category10");
+        var legend = new Plottable.Component.HorizontalLegend(colorScale);
 
         var xAxis  = new Plottable.Axis.Category(xScale, "bottom");
         var yAxis  = new Plottable.Axis.Numeric(yScale, "left");
@@ -147,6 +150,7 @@
         plot.project("fill", function(d){return "Series #" + d.i;}, colorScale);
 
         var chart = new Plottable.Component.Table([
+            [null,    null, legend],
             [null, yAxis, lines.merge(plots)],
             [null, null, xAxis]
         ]);
