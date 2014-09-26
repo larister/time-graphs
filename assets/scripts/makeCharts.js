@@ -70,7 +70,9 @@
         return chart;
     }
 
-    function makeStackedChart(stackedData) {
+    function makeStackedChart(timezoneData5Min) {
+        var chartData = transformTimezoneData(timezoneData5Min);
+
         var xScale     = new Plottable.Scale.Ordinal();
         var yScale     = new Plottable.Scale.Linear();
         var colorScale = new Plottable.Scale.Color("Category10");
@@ -82,10 +84,12 @@
             .animate(true);
         var chart;
 
-
-        for(var i = 0; i < stackedData.length; ++i) {
-            plot.addDataset(stackedData[i]);
-        }
+        _(chartData).each(function(data, i){
+            _(data).each(function(element, k) {
+                element.i = i;
+            });
+            plot.addDataset(data);
+        });
 
         plot.project("fill", function(d){return "Series #" + d.i;}, colorScale);
 
@@ -97,11 +101,14 @@
         return chart;
     }
 
-    function makeComparisonChart(stackedData) {
+    function makeComparisonChart(timezoneData5Min) {
+        var timezoneData = transformTimezoneData(timezoneData5Min);
         var chartData = [];
-        for(var i = 0; i < stackedData.length; ++i) {
-            chartData = chartData.concat(stackedData[i]);
+
+        for(var i in timezoneData) {
+            chartData = chartData.concat(timezoneData[i]);
         }
+
         var crossfilterData = crossfilter(chartData);
 
         var xDimension =  crossfilterData.dimension(function(d) { return d.x; });
@@ -130,9 +137,12 @@
         var plots = new Plottable.Component.Group([plot, plot1]);
 
 
-        for(var i = 0; i < stackedData.length; ++i) {
-            plot.addDataset(stackedData[i]);
-        }
+        _(timezoneData).each(function(data, i){
+            _(data).each(function(element, k) {
+                element.i = i;
+            });
+            plot.addDataset(data);
+        });
 
         plot.project("fill", function(d){return "Series #" + d.i;}, colorScale);
 
@@ -148,23 +158,24 @@
         var timezoneData = transformTimezoneData(timezoneData5Min);
         var basicChart = makeBasicChart(xyData);
         var stackedArea = makeStackedAreaChart(timezoneData);
-        var stackedBar = makeStackedChart(stackedData);
-        var comparisonChart = makeComparisonChart(stackedData);
+        var stackedBar = makeStackedChart(timezoneData5Min);
+        var comparisonChart = makeComparisonChart(timezoneData5Min);
 
         var timezoneTable = new Plottable.Component.Table();
         var playChartsTable = new Plottable.Component.Table();
 
-        timezoneTable.addComponent(0, 0, new Plottable.Component.Label("Timezones", "horizontal"));
+        timezoneTable.addComponent(0, 0, new Plottable.Component.Label("Area Timezones", "horizontal"));
         timezoneTable.addComponent(1, 0, stackedArea);
 
-        playChartsTable.addComponent(0, 0, new Plottable.Component.Label("Num2", "horizontal"));
+        timezoneTable.addComponent(2, 0, new Plottable.Component.Label("Stacked Bar Timezones", "horizontal"));
+        timezoneTable.addComponent(3, 0, stackedBar);
+
+        playChartsTable.addComponent(0, 0, new Plottable.Component.Label("Dummy Chart", "horizontal"));
         playChartsTable.addComponent(1, 0, basicChart);
 
-        playChartsTable.addComponent(0, 1, new Plottable.Component.Label("Num3", "horizontal"));
-        playChartsTable.addComponent(1, 1, stackedBar);
+        playChartsTable.addComponent(0, 1, new Plottable.Component.Label("Comparsion Timezones", "horizontal"));
+        playChartsTable.addComponent(1, 1, comparisonChart);
 
-        playChartsTable.addComponent(2, 0, new Plottable.Component.Label("Num4", "horizontal"));
-        playChartsTable.addComponent(3, 0, comparisonChart);
 
         var layoutTable = new Plottable.Component.Table([
             [timezoneTable],
