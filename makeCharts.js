@@ -17,6 +17,7 @@
 
         plot.project("stroke", colors[0]);
         plot.project("fill", colors[0]);
+        plot.animate(true);
 
         var chart = new Plottable.Component.Table([
             [yAxis, plot],
