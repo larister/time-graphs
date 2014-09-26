@@ -2,7 +2,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Time-graphs2</title>
+        <title>Time Graphs</title>
         <link rel="stylesheet" type="text/css" href="bower_components/plottable/plottable.css"/>
 
         <script src="bower_components/d3/d3.js"></script>
@@ -13,13 +13,15 @@
         <script src="scripts/makeCharts.js"></script>
 
         <script src="scripts/stackedData.js"></script>
+
+        <script src="scripts/timezoneData5Min.js"></script>
     </head>
     <body>
         {{{ body }}}
     </body>
     <script>
         window.onload = function(){
-            makeCharts(xyData, stackedData);
+            makeCharts(xyData, stackedData, timezoneData5Min);
         }
     </script>
 </html>
